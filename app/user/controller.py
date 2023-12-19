@@ -28,6 +28,32 @@ def get_users():
     })
 
 
+def edit_me(user_id):
+    try:
+        user_schema = UserSchema()
+        user = User.query.get(user_id)
+        data = request.json
+
+        user.wallet_address = data['wallet_address']
+        user.inch_api_key = data['inch_api_key']
+        user.inch_api_swap_key = data['inch_api_swap_key']
+
+        db.session.commit()
+
+        return jsonify({
+            "data": {
+                "wallet_address": user.wallet_address,
+                "inch_api_key": user.inch_api_key,
+                "inch_api_swap_key": user.inch_api_swap_key,
+            },
+            "status": 'success'
+        })
+    except:
+        return jsonify({
+            "status": 'error'
+        })
+
+
 def get_user(user_id):
     user = User.query.filter(User.id == user_id).one()
     user_schema = UserSchema()

@@ -19,3 +19,10 @@ def get_users():
 def get_user():
     user_id = get_jwt_identity()
     return controller.get_user(user_id)
+
+
+@bp.route('/edit/me', methods=['POST'])
+@jwt_required()
+def edit_me():
+    user_id = get_jwt_identity()
+    return controller.edit_me(user_id)
