@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from config import Config
+from config_app import Config
 from app.swap import bp as swap_bp
 from app.user import bp as user_bp
 from app.transactions import bp as transaction_bp
