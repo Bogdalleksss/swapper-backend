@@ -58,7 +58,7 @@ def get_token_balance():
     return controller.get_token_balance(user_id)
 
 
-@bp.route('/add_address')
+@bp.route('/add_address', methods=['POST'])
 @jwt_required()
 def add_address():
     user_id = get_jwt_identity()

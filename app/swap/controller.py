@@ -17,11 +17,14 @@ inch_base_url = 'https://api.1inch.dev'
 
 user_schema = UserSchema()
 
+
 def get_uniswap(provider, user_id):
-    req = request.json
-    user_data = User.query.filter(User.id == user_id).one()
-    user = user_schema.dump(user_data)
-    return Uniswap(address=user.wallet_address, private_key=req.private_key, provider=provider, version=2)
+    private_key = request.headers.get('private_key')
+    user = User.query.filter(User.id == user_id).one()
+
+    print(user.wallet_address)
+
+    return Uniswap(address=user.wallet_address, private_key=private_key, provider=provider, version=2)
 
 
 def get_web3(provider):
@@ -31,9 +34,8 @@ def get_web3(provider):
 
 
 def get_eth_balance():
-    data = request.json
-    provider = data['rpc']
-    address = data['address']
+    provider = request.args.get('rpc')
+    address = request.args.get('address')
 
     w3 = get_web3(provider)
     balance = w3.eth.get_balance(account=w3.to_checksum_address(address))
@@ -44,27 +46,28 @@ def get_eth_balance():
 
 
 def get_approve_spender(user_id):
-    user_data = User.query.filter(User.id == user_id).one()
-    user = user_schema.dump(user_data)
+    user = User.query.filter(User.id == user_id).one()
+
     chain = request.args.get('chain')
     url = inch_base_url + f'/swap/v5.2/{chain}/approve/spender'
+
+    print(user.inch_api_swap_key)
+
     return requests.get(url=url, headers={'Authorization': f'Bearer {user.inch_api_swap_key}'}).json()
 
 
 def get_allowance(user_id):
-    user_data = User.query.filter(User.id == user_id).one()
-    user = user_schema.dump(user_data)
+    user = User.query.filter(User.id == user_id).one()
     chain = request.args.get('chain')
     token = request.args.get('token')
-    address = config['WALLET_ADDRESS']
+    address = user.wallet_address
 
     url = inch_base_url + f'/swap/v5.2/{chain}/approve/allowance?tokenAddress={token}&walletAddress={address}'
     return requests.get(url=url, headers={'Authorization': f'Bearer {user.inch_api_swap_key}'}).json()
 
 
 def get_quote(user_id):
-    user_data = User.query.filter(User.id == user_id).one()
-    user = user_schema.dump(user_data)
+    user = User.query.filter(User.id == user_id).one()
 
     chain = request.args.get('chain')
     token_to = request.args.get('tokenTo')
@@ -88,8 +91,7 @@ def get_quote(user_id):
 
 
 def get_swap_data(user_id):
-    user_data = User.query.filter(User.id == user_id).one()
-    user = user_schema.dump(user_data)
+    user = User.query.filter(User.id == user_id).one()
 
     chain = request.args.get('chain')
     token_to = request.args.get('tokenTo')
@@ -105,7 +107,7 @@ def get_swap_data(user_id):
         'includeTokensInfo': 'true',
         'includeProtocols': 'true',
         'slippage': slippage,
-        'from': config['WALLET_ADDRESS']
+        'from': user.wallet_address
     }
     if receiver:
         params['receiver'] = receiver
@@ -119,9 +121,8 @@ def get_swap_data(user_id):
 
 
 def get_token_info(user_id):
-    data = request.json
-    provider = data['rpc']
-    address = data['address']
+    provider = request.args.get('rpc')
+    address = request.args.get('address')
 
     uniswap = get_uniswap(provider, user_id)
     w3 = get_web3(provider)
@@ -138,9 +139,8 @@ def get_token_info(user_id):
 
 
 def get_token_balance(user_id):
-    data = request.json
-    provider = data['rpc']
-    address = data['address']
+    provider = request.args.get('rpc')
+    address = request.args.get('address')
 
     uniswap = get_uniswap(provider, user_id)
     w3 = get_web3(provider)
@@ -153,6 +153,7 @@ def get_token_balance(user_id):
 
 def add_address(user_id):
     address_data = request.json
+    print(address_data)
 
     if not address_data['wallet_address'] or not address_data['name']:
         return {
