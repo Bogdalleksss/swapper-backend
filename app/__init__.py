@@ -1,3 +1,4 @@
+import eel
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from config_app import Config
@@ -6,14 +7,23 @@ from app.user import bp as user_bp
 from app.transactions import bp as transaction_bp
 from app.addresses import bp as addresse_bp
 from app.extensions import db, ma, jwt
+import multiprocessing
 
 from app.models.user import User, UserSchema
+
+
+def start_eel():
+    eel.init('app/dist/spa')
+    eel.start('index.html', mode='chrome', port=5030)
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(app)
+
+    eel_process = multiprocessing.Process(target=start_eel, args=())
+    eel_process.start()
 
     # Extensions
     db.init_app(app)
