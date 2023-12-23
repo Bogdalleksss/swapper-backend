@@ -22,8 +22,8 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     CORS(app)
 
-    eel_process = multiprocessing.Process(target=start_eel, args=())
-    eel_process.start()
+    # eel_process = multiprocessing.Process(target=start_eel, args=())
+    # eel_process.start()
 
     # Extensions
     db.init_app(app)
