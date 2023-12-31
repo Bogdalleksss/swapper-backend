@@ -6,6 +6,7 @@ from app.swap import bp as swap_bp
 from app.user import bp as user_bp
 from app.transactions import bp as transaction_bp
 from app.addresses import bp as addresse_bp
+from app.tokens import bp as tokens_bp
 from app.extensions import db, ma, jwt
 import multiprocessing
 
@@ -33,8 +34,7 @@ def create_app(config_class=Config):
     # Modules
     app.register_blueprint(swap_bp)
     app.register_blueprint(user_bp, url_prefix="/users")
-    app.register_blueprint(transaction_bp, url_prefix="/transactions")
-    app.register_blueprint(addresse_bp, url_prefix="/addresses")
+    app.register_blueprint(tokens_bp, url_prefix="/tokens")
 
     @app.route('/auth', methods=['POST'])
     def auth():

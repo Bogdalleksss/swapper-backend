@@ -9,7 +9,10 @@ class Transaction(db.Model):
     chain = db.Column(db.Integer)
     hash = db.Column(db.String(300))
     icon = db.Column(db.String(300))
-    monet = db.Column(db.String(300))
+    token_from = db.Column(db.String(300))
+    token_from_quantity = db.Column(db.Float)
+    token_to = db.Column(db.String(300))
+    token_to_quantity = db.Column(db.Float)
     date = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __repr__(self):

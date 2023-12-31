@@ -1,13 +1,8 @@
 import requests
 from flask import request
-from datetime import date
-
-from app_config import config
 from uniswap import Uniswap
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
-import json
-
 from app.models.user import User, UserSchema
 from app.models.address import Address, AddressSchema
 from app.models.transaction import Transaction, TransactionSchema
