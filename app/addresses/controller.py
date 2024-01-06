@@ -1,28 +1,20 @@
 from flask import request, jsonify
-from app.models.transaction import Transaction, TransactionSchema
+from app.models.address import Address, AddressSchema
 from app.extensions import db
 import uuid
 
+addresses_schema = AddressSchema(many=True)
 
-# def create_transactions():
-#     transaction_schema = TransactionSchema()
-#     user = Transaction(
-#         access_key=str(uuid.uuid4())
-#     )
-#     db.session.add(user)
-#     db.session.commit()
-#
-#     return jsonify({
-#         "status": "success",
-#         "data": transaction_schema.dump(user)
-#     })
-#
-#
-# def get_transactions():
-#     transactions = Transaction.query.all()
-#     transaction_schema = TransactionSchema(many=True)
-#
-#     return jsonify({
-#         "status": "success",
-#         "data": transaction_schema.dump(transactions)
-#     })
+
+def delete_address(user_id, id):
+    address = Address.query.get_or_404(id)
+
+    db.session.delete(address)
+    db.session.commit()
+
+    addresses = Address.query.filter(Address.user_id == user_id)
+
+    return jsonify({
+        "status": "success",
+        "data": addresses_schema.dump(addresses)
+    })

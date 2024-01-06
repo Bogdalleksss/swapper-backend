@@ -9,6 +9,7 @@ class Tokens(db.Model):
     chain = db.Column(db.Integer)
     address = db.Column(db.String(300))
     token = db.Column(db.String(300))
+    balance = db.Column(db.Float)
     date = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __repr__(self):

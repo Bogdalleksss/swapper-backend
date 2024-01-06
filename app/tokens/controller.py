@@ -10,15 +10,21 @@ def add_token(user_id):
     token_data = request.json
     is_token = db.session.query(Tokens.query.filter(Tokens.address == token_data['address']).exists()).scalar()
 
-    print(is_token)
+    if is_token:
+        token = Tokens.query.filter(Tokens.address == token_data['address']).one()
 
-    if not is_token:
+        token.token = token_data['token']
+        token.chain = token_data['chain']
+        token.address = token_data['address']
+        token.balance = token_data['balance']
+    else:
         token = Tokens(
             **token_data,
             user_id=user_id,
         )
         db.session.add(token)
-        db.session.commit()
+
+    db.session.commit()
 
     tokens = Tokens.query.all()
 
@@ -29,6 +35,20 @@ def add_token(user_id):
 
 
 def get_tokens(user_id):
+    tokens = Tokens.query.filter(Tokens.user_id == user_id)
+
+    return {
+        "status": "success",
+        "data": tokens_schema.dump(tokens)
+    }
+
+
+def delete_token(user_id, id):
+    token = Tokens.query.get_or_404(id)
+
+    db.session.delete(token)
+    db.session.commit()
+
     tokens = Tokens.query.filter(Tokens.user_id == user_id)
 
     return {
