@@ -19,7 +19,7 @@ def get_uniswap(provider, user_id):
 
     print(user.wallet_address)
 
-    return Uniswap(address=user.wallet_address, private_key=private_key, provider=provider, version=2)
+    return Uniswap(address=user.wallet_address, private_key=private_key, provider=provider, version=3)
 
 
 def get_web3(provider):
